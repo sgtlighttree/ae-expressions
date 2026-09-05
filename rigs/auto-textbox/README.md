@@ -12,8 +12,9 @@ expressions.
 
 ## Quick start (generator)
 
-Run [`build.jsx`](build.jsx) — via **File ▸ Scripts ▸ Run Script File…**, or dock
-it as a panel — enter your text and margins, and click **Create auto-textbox**.
+Run [`Auto-Fit TextBox.jsx`](Auto-Fit%20TextBox.jsx) — via **File ▸ Scripts ▸ Run
+Script File…**, or [install it as a panel](#install-as-a-panel) — enter your text
+and margins, and click **Create auto-textbox**.
 It builds the whole rig (point-text layer + solid box below it + Layer Control +
 `H_Margin`/`V_Margin` sliders + both expressions) into the active comp in one
 undo step. Prefer to wire it by hand? Follow the sections below.
@@ -37,12 +38,31 @@ undo step. Prefer to wire it by hand? Follow the sections below.
 | [`size.js`](size.js) | box ▸ Contents ▸ Rectangle 1 ▸ Rectangle Path 1 ▸ **Size** |
 | [`position.js`](position.js) | box ▸ Transform ▸ **Position** |
 
-[`build.jsx`](build.jsx) stamps all of the above automatically. It is
-**self-contained** — the expressions are embedded, so you can drop just that one
-file into After Effects' `Scripts/ScriptUI Panels/` folder (or run it via
-File ▸ Scripts ▸ Run Script File…). `size.js` / `position.js` remain the single
-source of truth; after editing either, re-embed them with
-`node tools/bundle-expressions.mjs`.
+[`Auto-Fit TextBox.jsx`](Auto-Fit%20TextBox.jsx) stamps all of the above
+automatically. It is **self-contained** — the expressions are embedded, so you
+can drop just that one file into After Effects' `Scripts/ScriptUI Panels/` folder
+(see [Install](#install-as-a-panel)) or run it via File ▸ Scripts ▸ Run Script
+File…. `size.js` / `position.js` remain the single source of truth; after editing
+either, re-embed them with `node tools/bundle-expressions.mjs`.
+
+## Install as a panel
+
+To get a dockable panel instead of a floating window, put the script in After
+Effects' ScriptUI Panels folder:
+
+- **macOS:** `/Applications/Adobe After Effects <version>/Scripts/ScriptUI Panels/`
+- **Windows:** `C:\Program Files\Adobe\Adobe After Effects <version>\Support Files\Scripts\ScriptUI Panels\`
+
+1. Copy `Auto-Fit TextBox.jsx` into that folder (admin rights may be required).
+2. In After Effects: **Preferences ▸ Scripting & Expressions ▸** enable *Allow
+   Scripts to Write Files and Access Network*.
+3. Restart After Effects.
+4. Open it from **Window ▸ Auto-Fit TextBox** and dock it anywhere. Approve the
+   trust prompt the first time.
+
+The Window-menu label is the filename, so rename the file if you want a different
+menu entry. Running the same file via **File ▸ Scripts ▸ Run Script File…**
+instead opens it as a floating window — no install needed.
 
 ## Why the Layer Control (not `thisComp.layer("Text 1")`)
 

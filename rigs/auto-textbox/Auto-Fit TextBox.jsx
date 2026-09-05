@@ -1,12 +1,12 @@
 /*
-  auto-textbox — build.jsx
+  Auto-Fit TextBox — auto-textbox rig generator
   A single, self-contained dockable ScriptUI panel that stamps the auto-textbox
   rig into After Effects: a point-text layer with a solid box below it that
   auto-sizes and centers to the text.
 
   Drop this ONE file into your After Effects "Scripts/ScriptUI Panels/" folder
   (no siblings needed — the expressions are embedded below), then open it from
-  Window ▸ build.jsx. Or run it once via File ▸ Scripts ▸ Run Script File….
+  Window ▸ Auto-Fit TextBox. Or run it once via File ▸ Scripts ▸ Run Script File….
 
   The embedded SIZE_EXPRESSION / POSITION_EXPRESSION are generated from the
   canonical size.js / position.js — regenerate after editing either with:

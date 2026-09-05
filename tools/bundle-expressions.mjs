@@ -2,15 +2,15 @@
  * bundle-expressions.mjs
  *
  * Embeds the canonical rig expression files (size.js / position.js) into the
- * self-contained build.jsx panel, so build.jsx can be dropped into After
+ * self-contained "Auto-Fit TextBox.jsx" panel, so it can be dropped into After
  * Effects' ScriptUI Panels folder with no siblings.
  *
  * size.js / position.js stay the single source of truth. After editing either,
  * run:
  *     node tools/bundle-expressions.mjs
  *
- * It rewrites only the block between the BEGIN/END sentinel comments in
- * build.jsx; everything else is left untouched.
+ * It rewrites only the block between the BEGIN/END sentinel comments in the
+ * panel file; everything else is left untouched.
  */
 
 import { readFileSync, writeFileSync } from "node:fs";
@@ -19,7 +19,7 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const rigDir = join(repoRoot, "rigs", "auto-textbox");
-const buildPath = join(rigDir, "build.jsx");
+const buildPath = join(rigDir, "Auto-Fit TextBox.jsx");
 
 const targets = [
   { file: "size.js", constName: "SIZE_EXPRESSION" },
@@ -47,7 +47,7 @@ let src = readFileSync(buildPath, "utf8");
 const beginIdx = src.indexOf(BEGIN);
 const endIdx = src.indexOf(END);
 if (beginIdx === -1 || endIdx === -1) {
-  throw new Error("Could not find BEGIN/END sentinel markers in build.jsx");
+  throw new Error("Could not find BEGIN/END sentinel markers in " + buildPath);
 }
 
 const before = src.slice(0, beginIdx);
@@ -59,5 +59,5 @@ const block =
 
 writeFileSync(buildPath, before + block + after);
 console.log(
-  "Bundled " + targets.map((t) => t.file).join(", ") + " into build.jsx"
+  "Bundled " + targets.map((t) => t.file).join(", ") + " into Auto-Fit TextBox.jsx"
 );
