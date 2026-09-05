@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# After Effects working / render junk (regenerable, not source)
+*.aep~
+Adobe After Effects Auto-Save/
+*.mp4
+*.mov
+*.aep
+*.ffx
+
+# Editors
+.vscode/
+.idea/
+*.swp
