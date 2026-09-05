@@ -37,10 +37,12 @@ undo step. Prefer to wire it by hand? Follow the sections below.
 | [`size.js`](size.js) | box ▸ Contents ▸ Rectangle 1 ▸ Rectangle Path 1 ▸ **Size** |
 | [`position.js`](position.js) | box ▸ Transform ▸ **Position** |
 
-[`build.jsx`](build.jsx) stamps all of the above automatically. It **reads
-`size.js` and `position.js` from its own folder at runtime** — they are the
-single source of truth — so keep all three files together (the install step must
-copy the whole rig folder, not just the script).
+[`build.jsx`](build.jsx) stamps all of the above automatically. It is
+**self-contained** — the expressions are embedded, so you can drop just that one
+file into After Effects' `Scripts/ScriptUI Panels/` folder (or run it via
+File ▸ Scripts ▸ Run Script File…). `size.js` / `position.js` remain the single
+source of truth; after editing either, re-embed them with
+`node tools/bundle-expressions.mjs`.
 
 ## Why the Layer Control (not `thisComp.layer("Text 1")`)
 

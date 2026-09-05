@@ -43,11 +43,13 @@ templates (`.mogrt`) differ, and the layer-reference pattern these rigs rely on.
 **Phase 1 — archive + documentation.** The repo is a reference you copy from; it
 does not touch your After Effects install.
 
-**Phase 2 (planned) — living toolkit.** Add a `build.jsx` generator per rig
-(stamps the whole rig onto a selected layer in one click) and an install step
-that links the `.jsx` files into AE's `Scripts/ScriptUI Panels/` folder.
-Expressions stay the text source of truth; `.ffx`/`.aep` are regenerated, not
-committed.
+**Phase 2 (in progress) — living toolkit.** Each rig can ship a self-contained
+`build.jsx` panel that stamps the whole rig into After Effects in one click —
+drop it into AE's `Scripts/ScriptUI Panels/` folder, no siblings required.
+`auto-textbox` has one. The expressions stay the text source of truth: the panel
+embeds them, regenerated from the `.js` files by
+[`tools/bundle-expressions.mjs`](tools/bundle-expressions.mjs). `.ffx`/`.aep`
+outputs are regenerated, not committed.
 
 ## License
 

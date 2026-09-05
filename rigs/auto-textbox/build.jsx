@@ -1,46 +1,67 @@
 /*
   auto-textbox — build.jsx
-  Dockable ScriptUI panel that stamps the auto-textbox rig into After Effects:
-  a point-text layer with a solid box below it that auto-sizes and centers to
-  the text via the size.js / position.js expressions.
+  A single, self-contained dockable ScriptUI panel that stamps the auto-textbox
+  rig into After Effects: a point-text layer with a solid box below it that
+  auto-sizes and centers to the text.
 
-  Run it two ways:
-    - File ▸ Scripts ▸ Run Script File…            (one-shot; shows a floating window)
-    - Window ▸ build.jsx                            (docked, if installed in the
-                                                     ScriptUI Panels folder)
+  Drop this ONE file into your After Effects "Scripts/ScriptUI Panels/" folder
+  (no siblings needed — the expressions are embedded below), then open it from
+  Window ▸ build.jsx. Or run it once via File ▸ Scripts ▸ Run Script File….
+
+  The embedded SIZE_EXPRESSION / POSITION_EXPRESSION are generated from the
+  canonical size.js / position.js — regenerate after editing either with:
+      node tools/bundle-expressions.mjs
 
   Requires: After Effects with the JavaScript expressions engine (CC 2019 / 16.0+).
-  IMPORTANT: keep size.js and position.js in the SAME folder as this file — the
-  expressions are read from them at runtime (they are the single source of truth).
 */
 
 (function (thisObj) {
 
-  // --- Read the canonical expression files sitting next to this script ---------
-  function scriptFolder() {
-    return File($.fileName).parent; // folder containing build.jsx
-  }
+  // === BEGIN GENERATED EXPRESSIONS — regenerate with: node tools/bundle-expressions.mjs ===
+  var SIZE_EXPRESSION = [
+    "/*",
+    "  auto-textbox — Size",
+    "  Apply to:  box shape layer ▸ Contents ▸ Rectangle 1 ▸ Rectangle Path 1 ▸ Size",
+    "  Requires on the box layer:",
+    "    - Layer Control  (pickwhipped once to the target text layer)",
+    "    - Slider Control named \"H_Margin\"   (horizontal padding, px)",
+    "    - Slider Control named \"V_Margin\"   (vertical padding, px)",
+    "",
+    "  The Layer Control holds a hard reference, not a name string, so the target",
+    "  text layer can be renamed or moved anywhere in the stack without breaking.",
+    "*/",
+    "var s = effect(\"Layer Control\")(\"Layer\");",
+    "if (s == null) {",
+    "  value;                       // not picked yet — hold current value, no red error",
+    "} else {",
+    "  var r = s.sourceRectAtTime();",
+    "  [r.width + effect(\"H_Margin\")(\"Slider\"), r.height + effect(\"V_Margin\")(\"Slider\")];",
+    "}"
+  ].join("\n");
 
-  function readExpression(fileName) {
-    var f = new File(scriptFolder().fsName + "/" + fileName);
-    if (!f.exists) {
-      throw new Error(
-        "Could not find '" + fileName + "' next to build.jsx.\n" +
-        "The auto-textbox rig needs size.js and position.js in the same folder."
-      );
-    }
-    f.open("r");
-    var text = f.read();
-    f.close();
-    return text;
-  }
+  var POSITION_EXPRESSION = [
+    "/*",
+    "  auto-textbox — Position",
+    "  Apply to:  box shape layer ▸ Transform ▸ Position",
+    "  Requires on the box layer:",
+    "    - Layer Control  (pickwhipped once to the target text layer)",
+    "",
+    "  Centers the box on the text's source rectangle, converted to composition space",
+    "  via toComp() — so the box lands correctly regardless of the text layer's",
+    "  position, parenting, or stacking order.",
+    "*/",
+    "var s = effect(\"Layer Control\")(\"Layer\");",
+    "if (s == null) {",
+    "  value;",
+    "} else {",
+    "  var r = s.sourceRectAtTime();",
+    "  s.toComp([r.left + r.width / 2, r.top + r.height / 2]);",
+    "}"
+  ].join("\n");
+  // === END GENERATED EXPRESSIONS ===
 
   // --- Core builder ------------------------------------------------------------
   function buildRig(textContent, hMargin, vMargin) {
-    // Load expressions first so we fail before touching the project.
-    var sizeExpr = readExpression("size.js");
-    var posExpr = readExpression("position.js");
-
     app.beginUndoGroup("Create auto-textbox");
     try {
       // 1. Active comp, else create one.
@@ -85,9 +106,9 @@
       vSlider.property("ADBE Slider Control-0001").setValue(vMargin);
       layerCtrl.property("ADBE Layer Control-0001").setValue(textLayer.index); // programmatic pickwhip
 
-      // 5. Apply the expressions from size.js / position.js.
-      rect.property("ADBE Vector Rect Size").expression = sizeExpr;
-      box.property("ADBE Transform Group").property("ADBE Position").expression = posExpr;
+      // 5. Apply the embedded expressions.
+      rect.property("ADBE Vector Rect Size").expression = SIZE_EXPRESSION;
+      box.property("ADBE Transform Group").property("ADBE Position").expression = POSITION_EXPRESSION;
 
       textLayer.selected = true;
       return "Created auto-textbox in '" + comp.name + "'.";
@@ -130,6 +151,11 @@
       var v = parseFloat(vInput.text);
       if (isNaN(h)) h = 0;
       if (isNaN(v)) v = 0;
+      if (SIZE_EXPRESSION === "" || POSITION_EXPRESSION === "") {
+        status.text = "Error: expressions not bundled — run node tools/bundle-expressions.mjs";
+        alert("auto-textbox\n\nEmbedded expressions are empty.\nRun: node tools/bundle-expressions.mjs");
+        return;
+      }
       try {
         status.text = buildRig(textInput.text, h, v);
       } catch (err) {
