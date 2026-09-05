@@ -86,28 +86,33 @@
       box.name = "auto-textbox";
       box.moveAfter(textLayer);
 
-      var root = box.property("ADBE Root Vectors Group");
-      var group = root.addProperty("ADBE Vector Group");
+      // 3a. Rectangle + fill. Set the fill colour immediately; the rectangle's
+      //     Size is left to the expression below. NOTE: addProperty() can
+      //     invalidate previously grabbed property references, so nothing added
+      //     here is reused later — everything is re-fetched by name at use.
+      var group = box.property("ADBE Root Vectors Group").addProperty("ADBE Vector Group");
       group.name = "Box";
       var groupContents = group.property("ADBE Vectors Group");
-      var rect = groupContents.addProperty("ADBE Vector Shape - Rect"); // Rectangle Path 1
-      var fill = groupContents.addProperty("ADBE Vector Graphic - Fill");
-      fill.property("ADBE Vector Fill Color").setValue([0.15, 0.15, 0.15, 1]);
+      groupContents.addProperty("ADBE Vector Shape - Rect");             // Rectangle Path 1
+      groupContents.addProperty("ADBE Vector Graphic - Fill")
+        .property("ADBE Vector Fill Color").setValue([0.15, 0.15, 0.15, 1]);
 
       // 4. Controls on the box: Layer Control + two named sliders.
       var fx = box.property("ADBE Effect Parade");
-      var layerCtrl = fx.addProperty("ADBE Layer Control");   // keep default name "Layer Control"
-      var hSlider = fx.addProperty("ADBE Slider Control");
-      hSlider.name = "H_Margin";
-      var vSlider = fx.addProperty("ADBE Slider Control");
-      vSlider.name = "V_Margin";
+      fx.addProperty("ADBE Layer Control");                             // keeps default name "Layer Control"
+      fx.addProperty("ADBE Slider Control").name = "H_Margin";
+      fx.addProperty("ADBE Slider Control").name = "V_Margin";
 
-      hSlider.property("ADBE Slider Control-0001").setValue(hMargin);
-      vSlider.property("ADBE Slider Control-0001").setValue(vMargin);
-      layerCtrl.property("ADBE Layer Control-0001").setValue(textLayer.index); // programmatic pickwhip
+      // Re-fetch each effect by name before setting its value (refs from the
+      // addProperty calls above may be stale once later properties are added).
+      fx.property("H_Margin").property("ADBE Slider Control-0001").setValue(hMargin);
+      fx.property("V_Margin").property("ADBE Slider Control-0001").setValue(vMargin);
+      fx.property("Layer Control").property("ADBE Layer Control-0001").setValue(textLayer.index);
 
-      // 5. Apply the embedded expressions.
-      rect.property("ADBE Vector Rect Size").expression = SIZE_EXPRESSION;
+      // 5. Apply the embedded expressions, re-resolving the properties fresh.
+      box.property("ADBE Root Vectors Group").property("Box")
+        .property("ADBE Vectors Group").property("ADBE Vector Shape - Rect")
+        .property("ADBE Vector Rect Size").expression = SIZE_EXPRESSION;
       box.property("ADBE Transform Group").property("ADBE Position").expression = POSITION_EXPRESSION;
 
       textLayer.selected = true;
