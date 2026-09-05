@@ -47,6 +47,7 @@ does not touch your After Effects install.
 descriptively-named panel script that stamps the whole rig into After Effects in
 one click — drop it into AE's `Scripts/ScriptUI Panels/` folder, no siblings
 required. `auto-textbox` ships [`Auto-Fit TextBox.jsx`](rigs/auto-textbox/Auto-Fit%20TextBox.jsx).
+Install every rig's panel at once with [`./install.sh`](install.sh) (macOS/Linux).
 The expressions stay the text source of truth: the panel embeds them, regenerated
 from the `.js` files by
 [`tools/bundle-expressions.mjs`](tools/bundle-expressions.mjs). `.ffx`/`.aep`

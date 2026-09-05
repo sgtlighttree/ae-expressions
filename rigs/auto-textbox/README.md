@@ -48,7 +48,16 @@ either, re-embed them with `node tools/bundle-expressions.mjs`.
 ## Install as a panel
 
 To get a dockable panel instead of a floating window, put the script in After
-Effects' ScriptUI Panels folder:
+Effects' ScriptUI Panels folder.
+
+**One command (macOS/Linux)** — from the repo root, copies every rig's panel into
+each detected After Effects install:
+
+```sh
+./install.sh          # or: sudo ./install.sh   if /Applications needs it
+```
+
+**Manual** — copy the script into:
 
 - **macOS:** `/Applications/Adobe After Effects <version>/Scripts/ScriptUI Panels/`
 - **Windows:** `C:\Program Files\Adobe\Adobe After Effects <version>\Support Files\Scripts\ScriptUI Panels\`
